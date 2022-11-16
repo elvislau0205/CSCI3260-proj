@@ -18,15 +18,32 @@ Student Name:
 #include <map>
 
 // screen setting
+GLFWwindow* window;
 const int SCR_WIDTH = 800;
 const int SCR_HEIGHT = 600;
 
-float y_delta = 5.0f;//number of degree change in y-axis
-int y_press_num = 0;//number of changes in y-axis
-float x_delta = 5.0f;//number of degree change in y-axis
-int x_press_num = 0;//number of changes in y-axis
-float z_delta = 5.0f;//number of degree change in y-axis
-int z_press_num = 0;//number of changes in y-axis
+struct keyboardcontroller
+{
+	bool UP = false;
+	bool DOWN = false;
+	bool LEFT = false;
+	bool RIGHT = false;
+};
+
+keyboardcontroller keyboardCtl;
+
+float y_delta = 1.0f;//number of degree change in y-axis
+float y_press_num = 0.0f;//number of changes in y-axis
+float x_delta = 1.0f;//number of degree change in y-axis
+float x_press_num = 0.0f;//number of changes in y-axis
+float z_delta = 1.0f;//number of degree change in y-axis
+float z_press_num = 0.0f;//number of changes in y-axis
+
+float rotation = 0.0f;
+float rotation2 = 0.0f;
+double prevTime = glfwGetTime();
+float x_delta2 = 0.3f;//number of degree change in y-axis
+float hori = 0.0f;
 
 Shader shader;
 
@@ -355,42 +372,77 @@ void paintGL(void)  //always run
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num, y_delta * y_press_num, z_delta * z_press_num));
 	viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	projectionMatrix = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 300.0f);
-	
-	shader.setMat4("modelMatrix", modelMatrix);
-	shader.setMat4("viewMatrix", viewMatrix);
-	shader.setMat4("projectionMatrix", projectionMatrix);
-	//Bind different textures
 
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f/200));
+	shader.setMat4("projectionMatrix", projectionMatrix);
+
+	double crntTime = glfwGetTime();
+	if (crntTime - prevTime >= 0.05) {
+		rotation += 1.0f;
+		prevTime = crntTime;
+		if (hori <= 15.0f && hori >= -15.0f) {
+			hori += x_delta2;
+		}
+		else {
+			x_delta2 *= -1.0f;
+			hori += x_delta2;
+		}
+		if (keyboardCtl.LEFT)
+			x_press_num += 1.0f;
+		if (keyboardCtl.RIGHT)
+			x_press_num -= 1.0f;
+		if (keyboardCtl.UP)
+			z_press_num += 1.0f;
+		if (keyboardCtl.DOWN)
+			z_press_num -= 1.0f;
+		double xpos, ypos;
+		glfwGetCursorPos(window, &xpos, &ypos);
+		rotation2 = -xpos / 3;
+	}
+	//Bind different textures
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num, -y_delta * y_press_num, -z_delta * z_press_num));
+	viewMatrix = glm::rotate(viewMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setMat4("viewMatrix", viewMatrix);
+
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 200.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num * 200.0f, y_delta * y_press_num * 200.0f, z_delta * z_press_num * 200.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
 	texture[0].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[0]);
-	//glDrawElements(GL_TRIANGLES, spacecraft.indices.size(), GL_UNSIGNED_INT, 0);
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f*100));
+	glDrawElements(GL_TRIANGLES, spacecraft.indices.size(), GL_UNSIGNED_INT, 0);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num * 200.0f, -y_delta * y_press_num * 200.0f, -z_delta * z_press_num * 200.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(200.0f));
+
 
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 70.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
 	texture[1].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[1]);
-	//glDrawElements(GL_TRIANGLES, rock.indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, rock.indices.size(), GL_UNSIGNED_INT, 0);
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -70.0f));
 
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f * 10));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 10.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
 	texture[2].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[2]);
 	glDrawElements(GL_TRIANGLES, planet.indices.size(), GL_UNSIGNED_INT, 0);
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -10.0f));
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 10));
-	shader.setMat4("modelMatrix", modelMatrix);
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f));
 
+
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(hori, 0.0f, 20.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setMat4("modelMatrix", modelMatrix);
 	texture[3].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[3]);
@@ -404,7 +456,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-	// Sets the mouse-button callback for the current window.	
+
 }
 
 void cursor_position_callback(GLFWwindow* window, double x, double y)
@@ -419,30 +471,34 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-		x_press_num += 1;//increase y coordinate
+	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+		keyboardCtl.LEFT = true;
 	}
-	if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-		x_press_num -= 1;//increase y coordinate
+	if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
+		keyboardCtl.LEFT = false;
 	}
-	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-		z_press_num += 1;//increase y coordinate
+	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+		keyboardCtl.RIGHT = true;
 	}
-	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-		z_press_num -= 1;//increase y coordinate
+	if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+		keyboardCtl.RIGHT = false;
 	}
 	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-		y_press_num += 1;//increase y coordinate
+		keyboardCtl.UP = true;
+	}
+	if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
+		keyboardCtl.UP = false;
 	}
 	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-		y_press_num -= 1;//increase y coordinate
+		keyboardCtl.DOWN = true;
+	}
+	if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
+		keyboardCtl.DOWN = false;
 	}
 }
 
-
 int main(int argc, char* argv[])
 {
-	GLFWwindow* window;
 
 	/* Initialize the glfw */
 	if (!glfwInit()) {
