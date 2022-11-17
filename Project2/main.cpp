@@ -340,7 +340,21 @@ void sendDataToOpenGL()
 	texture[1].setupTexture("resources/texture/rockTexture.bmp");
 	texture[2].setupTexture("resources/texture/earthTexture.bmp");
 	texture[3].setupTexture("resources/texture/vehicleTexture.bmp");
+
 }
+
+const int num = 200;
+float scaleMax = 0.7f;
+float scaleMin = 0.1f;
+float scale[num];
+float yMax = 8.0f;
+float yMin = 5.0f;
+float y[num];
+float circleMax = 135.0f;
+float circleMin = 65.0f;
+float z[num];
+float x[num];
+
 
 void initializedGL(void) //run only once
 {
@@ -352,17 +366,28 @@ void initializedGL(void) //run only once
 	sendDataToOpenGL();
 
 	//set up camera position
+	//camPos = glm::vec3(0.0f, 50.0f, 0.0f);
 	camPos = glm::vec3(0.0f, 3.5f, -6.5f);
 	//TODO: set up the vertex shader and fragment shader
 	shader.setupShader("VertexShaderCode.glsl", "FragmentShaderCode.glsl");
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+
+	for (int i = 0; i < num; i++) {
+		scale[i] = (scaleMax - scaleMin) * rand() / (RAND_MAX + 1.0) + scaleMin;
+		y[i] = (yMax - yMin) * rand() / (RAND_MAX + 1.0) + yMin;
+		z[i] = (circleMax - circleMin) * rand() / (RAND_MAX + 1.0) + circleMin;
+		x[i] = sqrt(1225 - (z[i] - 100) * (z[i] - 100));
+		if (i % 2 == 0)
+			x[i] *= -1;
+	};
 }
 
 void paintGL(void)  //always run
 {
-	glClearColor(0.3f, 0.3f, 0.3f, 0.5f); //specify the background color, this is just an example
+	glClearColor(1.0f, 1.0f, 1.0f, 0.5f); //specify the background color, this is just an example
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//TODO:
 	shader.use();
@@ -372,7 +397,6 @@ void paintGL(void)  //always run
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
-	viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	projectionMatrix = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 300.0f);
 
 	shader.setMat4("projectionMatrix", projectionMatrix);
@@ -398,45 +422,59 @@ void paintGL(void)  //always run
 			z_press_num -= 1.0f;
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		rotation2 = -xpos / 3;
+		rotation2 = (xpos-400) / 800 * 360;
 	}
-	//Bind different textures
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num, -y_delta * y_press_num, -z_delta * z_press_num));
-	viewMatrix = glm::rotate(viewMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	//viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	viewMatrix = glm::rotate(viewMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
+	viewMatrix = glm::translate(viewMatrix, glm::vec3(-x_delta * x_press_num , -y_delta * y_press_num, -z_delta * z_press_num));
 	shader.setMat4("viewMatrix", viewMatrix);
 
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num, y_delta * y_press_num, z_delta * z_press_num));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 200.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num * 200.0f, y_delta * y_press_num * 200.0f, z_delta * z_press_num * 200.0f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
 	texture[0].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[0]);
 	glDrawElements(GL_TRIANGLES, spacecraft.indices.size(), GL_UNSIGNED_INT, 0);
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num * 200.0f, -y_delta * y_press_num * 200.0f, -z_delta * z_press_num * 200.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(200.0f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num, -y_delta * y_press_num, -z_delta * z_press_num));
 
-
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 70.0f));
-	shader.setMat4("modelMatrix", modelMatrix);
 	texture[1].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[1]);
-	glDrawElements(GL_TRIANGLES, rock.indices.size(), GL_UNSIGNED_INT, 0);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -70.0f));
 
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 10.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 6.5f, 100.0f));
+	for (int i = 0; i < num; i++) {
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(x[i], y[i], z[i]));
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -6.5f, -100.0f));
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(scale[i]));
+		shader.setMat4("modelMatrix", modelMatrix);
+		glDrawElements(GL_TRIANGLES, rock.indices.size(), GL_UNSIGNED_INT, 0);
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(1/scale[i]));
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 6.5f, 100.0f));
+		modelMatrix = glm::translate(modelMatrix, glm::vec3(-x[i], -y[i], -z[i]));
+		modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+	}
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -6.5f, -100.0f));
+
+
+
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 100.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
 	texture[2].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[2]);
 	glDrawElements(GL_TRIANGLES, planet.indices.size(), GL_UNSIGNED_INT, 0);
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -10.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f));
+	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -100.0f));
 
 
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
