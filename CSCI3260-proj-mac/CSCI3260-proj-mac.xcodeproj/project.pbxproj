@@ -1,0 +1,345 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3D23F94C29276C6C003EC0BB /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D23F94129276C6C003EC0BB /* Shader.cpp */; };
+		3D23F94D29276C6C003EC0BB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D23F94329276C6C003EC0BB /* main.cpp */; };
+		3D23F94E29276C6C003EC0BB /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D23F94729276C6C003EC0BB /* Texture.cpp */; };
+		3D23F951292770DD003EC0BB /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D23F950292770DD003EC0BB /* OpenGL.framework */; };
+		3D23F953292770FE003EC0BB /* libGLEW.2.2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D23F952292770FE003EC0BB /* libGLEW.2.2.0.dylib */; };
+		3D23F954292770FE003EC0BB /* libGLEW.2.2.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 3D23F952292770FE003EC0BB /* libGLEW.2.2.0.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3D23F95729277113003EC0BB /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D23F95629277113003EC0BB /* libglfw.3.3.dylib */; };
+		3D23F95829277113003EC0BB /* libglfw.3.3.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 3D23F95629277113003EC0BB /* libglfw.3.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3D23F93529276C05003EC0BB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		3D23F955292770FE003EC0BB /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				3D23F95829277113003EC0BB /* libglfw.3.3.dylib in Embed Libraries */,
+				3D23F954292770FE003EC0BB /* libGLEW.2.2.0.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3D23F93729276C05003EC0BB /* CSCI3260-proj-mac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "CSCI3260-proj-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D23F94129276C6C003EC0BB /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
+		3D23F94229276C6C003EC0BB /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
+		3D23F94329276C6C003EC0BB /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		3D23F94629276C6C003EC0BB /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Shader.h; sourceTree = "<group>"; };
+		3D23F94729276C6C003EC0BB /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Texture.cpp; sourceTree = "<group>"; };
+		3D23F94829276C6C003EC0BB /* FragmentShaderCode.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FragmentShaderCode.glsl; sourceTree = "<group>"; };
+		3D23F94929276C6C003EC0BB /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
+		3D23F94A29276C6C003EC0BB /* VertexShaderCode.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VertexShaderCode.glsl; sourceTree = "<group>"; };
+		3D23F94B29276C6C003EC0BB /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		3D23F950292770DD003EC0BB /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		3D23F952292770FE003EC0BB /* libGLEW.2.2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libGLEW.2.2.0.dylib; path = ../../../../../../../../../../../opt/homebrew/Cellar/glew/2.2.0_1/lib/libGLEW.2.2.0.dylib; sourceTree = "<group>"; };
+		3D23F95629277113003EC0BB /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../../../../../../../opt/homebrew/Cellar/glfw/3.3.8/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3D23F93429276C05003EC0BB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D23F95729277113003EC0BB /* libglfw.3.3.dylib in Frameworks */,
+				3D23F951292770DD003EC0BB /* OpenGL.framework in Frameworks */,
+				3D23F953292770FE003EC0BB /* libGLEW.2.2.0.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3D23F92E29276C05003EC0BB = {
+			isa = PBXGroup;
+			children = (
+				3D23F93929276C05003EC0BB /* CSCI3260-proj-mac */,
+				3D23F93829276C05003EC0BB /* Products */,
+				3D23F94F292770DD003EC0BB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		3D23F93829276C05003EC0BB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3D23F93729276C05003EC0BB /* CSCI3260-proj-mac */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3D23F93929276C05003EC0BB /* CSCI3260-proj-mac */ = {
+			isa = PBXGroup;
+			children = (
+				3D23F94229276C6C003EC0BB /* resources */,
+				3D23F94829276C6C003EC0BB /* FragmentShaderCode.glsl */,
+				3D23F94B29276C6C003EC0BB /* readme.txt */,
+				3D23F94129276C6C003EC0BB /* Shader.cpp */,
+				3D23F94629276C6C003EC0BB /* Shader.h */,
+				3D23F94729276C6C003EC0BB /* Texture.cpp */,
+				3D23F94929276C6C003EC0BB /* Texture.h */,
+				3D23F94A29276C6C003EC0BB /* VertexShaderCode.glsl */,
+				3D23F94329276C6C003EC0BB /* main.cpp */,
+			);
+			path = "CSCI3260-proj-mac";
+			sourceTree = "<group>";
+		};
+		3D23F94F292770DD003EC0BB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3D23F95629277113003EC0BB /* libglfw.3.3.dylib */,
+				3D23F952292770FE003EC0BB /* libGLEW.2.2.0.dylib */,
+				3D23F950292770DD003EC0BB /* OpenGL.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3D23F93629276C05003EC0BB /* CSCI3260-proj-mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D23F93E29276C05003EC0BB /* Build configuration list for PBXNativeTarget "CSCI3260-proj-mac" */;
+			buildPhases = (
+				3D23F93329276C05003EC0BB /* Sources */,
+				3D23F93429276C05003EC0BB /* Frameworks */,
+				3D23F93529276C05003EC0BB /* CopyFiles */,
+				3D23F955292770FE003EC0BB /* Embed Libraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CSCI3260-proj-mac";
+			productName = "CSCI3260-proj-mac";
+			productReference = 3D23F93729276C05003EC0BB /* CSCI3260-proj-mac */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3D23F92F29276C05003EC0BB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1400;
+				TargetAttributes = {
+					3D23F93629276C05003EC0BB = {
+						CreatedOnToolsVersion = 14.0.1;
+					};
+				};
+			};
+			buildConfigurationList = 3D23F93229276C05003EC0BB /* Build configuration list for PBXProject "CSCI3260-proj-mac" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3D23F92E29276C05003EC0BB;
+			productRefGroup = 3D23F93829276C05003EC0BB /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3D23F93629276C05003EC0BB /* CSCI3260-proj-mac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3D23F93329276C05003EC0BB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3D23F94E29276C6C003EC0BB /* Texture.cpp in Sources */,
+				3D23F94D29276C6C003EC0BB /* main.cpp in Sources */,
+				3D23F94C29276C6C003EC0BB /* Shader.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3D23F93C29276C05003EC0BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3D23F93D29276C05003EC0BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3D23F93F29276C05003EC0BB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/homebrew/Cellar/glew/2.2.0_1/lib,
+					/opt/homebrew/Cellar/glfw/3.3.8/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /opt/homebrew/Cellar/;
+			};
+			name = Debug;
+		};
+		3D23F94029276C05003EC0BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/opt/homebrew/Cellar/glew/2.2.0_1/lib,
+					/opt/homebrew/Cellar/glfw/3.3.8/lib,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /opt/homebrew/Cellar/;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3D23F93229276C05003EC0BB /* Build configuration list for PBXProject "CSCI3260-proj-mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D23F93C29276C05003EC0BB /* Debug */,
+				3D23F93D29276C05003EC0BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D23F93E29276C05003EC0BB /* Build configuration list for PBXNativeTarget "CSCI3260-proj-mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D23F93F29276C05003EC0BB /* Debug */,
+				3D23F94029276C05003EC0BB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3D23F92F29276C05003EC0BB /* Project object */;
+}

@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+CSCI3260-proj-mac in CSCI3260-proj-mac, no dependencies
