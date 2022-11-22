@@ -42,6 +42,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3D19175B292B74D100D95A02 /* Dependencies */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Dependencies; sourceTree = "<group>"; };
 		3D23F93729276C05003EC0BB /* CSCI3260-proj-mac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "CSCI3260-proj-mac"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D23F94129276C6C003EC0BB /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Shader.cpp; sourceTree = "<group>"; };
 		3D23F94229276C6C003EC0BB /* resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = resources; sourceTree = "<group>"; };
@@ -91,6 +92,7 @@
 		3D23F93929276C05003EC0BB /* CSCI3260-proj-mac */ = {
 			isa = PBXGroup;
 			children = (
+				3D19175B292B74D100D95A02 /* Dependencies */,
 				3D23F94229276C6C003EC0BB /* resources */,
 				3D23F94829276C6C003EC0BB /* FragmentShaderCode.glsl */,
 				3D23F94B29276C6C003EC0BB /* readme.txt */,
@@ -300,7 +302,7 @@
 					/opt/homebrew/Cellar/glfw/3.3.8/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /opt/homebrew/Cellar/;
+				USER_HEADER_SEARCH_PATHS = /opt/homebrew/include/;
 			};
 			name = Debug;
 		};
@@ -314,7 +316,7 @@
 					/opt/homebrew/Cellar/glfw/3.3.8/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = /opt/homebrew/Cellar/;
+				USER_HEADER_SEARCH_PATHS = /opt/homebrew/include/;
 			};
 			name = Release;
 		};

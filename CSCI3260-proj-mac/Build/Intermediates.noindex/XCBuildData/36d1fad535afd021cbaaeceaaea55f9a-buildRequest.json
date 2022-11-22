@@ -1,0 +1,57 @@
+{
+  "_buildCommand2" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildAndRun"
+  },
+  "buildCommand" : "build",
+  "configuredTargets" : [
+    {
+      "guid" : "777f0a50fdeb5f78ab0c0e90980d57efd19fe32b48269bd0f5d2db2f6784c67b"
+    }
+  ],
+  "containerPath" : "/Users/cyruss081115/Documents/Study/CUHK/Year 3 Sem 1/CSCI 3260 Principle of Comp Graphics/Code/proj/CSCI3260-proj/CSCI3260-proj-mac/CSCI3260-proj-mac.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "arm64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "macosx",
+      "sdk" : "macosx12.3",
+      "sdkVariant" : "macos",
+      "supportedArchitectures" : [
+        "arm64e",
+        "arm64",
+        "x86_64"
+      ],
+      "targetArchitecture" : "arm64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/cyruss081115/Documents/Study/CUHK/Year 3 Sem 1/CSCI 3260 Principle of Comp Graphics/Code/proj/CSCI3260-proj/CSCI3260-proj-mac/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/cyruss081115/Documents/Study/CUHK/Year 3 Sem 1/CSCI 3260 Principle of Comp Graphics/Code/proj/CSCI3260-proj/CSCI3260-proj-mac/Build/Products",
+      "derivedDataPath" : "/Users/cyruss081115/Documents/Programming Projects/OpenGL test/OpenGL test",
+      "indexDataStoreFolderPath" : "/Users/cyruss081115/Documents/Programming Projects/OpenGL test/OpenGL test/CSCI3260-proj-mac-cknhcjyqznnxxtdgghjwgaehnzrp/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/cyruss081115/Documents/Programming Projects/OpenGL test/OpenGL test/CSCI3260-proj-mac-cknhcjyqznnxxtdgghjwgaehnzrp/Index.noindex/PrecompiledHeaders",
+      "pchPath" : "/Users/cyruss081115/Documents/Study/CUHK/Year 3 Sem 1/CSCI 3260 Principle of Comp Graphics/Code/proj/CSCI3260-proj/CSCI3260-proj-mac/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "schemeCommand2" : "launch",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}
