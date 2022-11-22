@@ -185,6 +185,7 @@ Model spacecraft = loadOBJ("resources/object/spacecraft.obj");
 Model rock = loadOBJ("resources/object/rock.obj");
 Model planet = loadOBJ("resources/object/planet.obj");
 Model craft = loadOBJ("resources/object/craft.obj");
+Model skybox = loadOBJ('resources/skybox/skybox.obj');
 
 void get_OpenGL_info()
 {
@@ -333,6 +334,39 @@ void sendDataToOpenGL()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[3]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, craft.indices.size() * sizeof(unsigned int), &craft.indices[0], GL_STATIC_DRAW);
 
+    ///////////////////////////////////////////
+    glGenVertexArrays(1, &vao[4]);
+    glBindVertexArray(vao[4]);
+
+    glGenBuffers(1, &vbo[4]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[4]);
+    glBufferData(GL_ARRAY_BUFFER, skybox.vertices.size() * sizeof(Vertex), &skybox.vertices[0], GL_STATIC_DRAW);
+
+    //vertex position
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(
+        0, // attribute
+        3, // size
+        GL_FLOAT, // type
+        GL_FALSE, // normalized?
+        sizeof(Vertex), // stride
+        (void*)offsetof(Vertex, position) // array buffer offset
+    );
+
+    //vertex uv
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(
+        1, // attribute
+        2, // size
+        GL_FLOAT, // type
+        GL_FALSE, // normalized?
+        sizeof(Vertex), // stride
+        (void*)offsetof(Vertex, uv) // array buffer offset
+    );
+
+    glGenBuffers(1, &ebo[4]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[4]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, skybox.indices.size() * sizeof(unsigned int), &skybox.indices[0], GL_STATIC_DRAW);
 
 
 	//Load textures
@@ -340,6 +374,7 @@ void sendDataToOpenGL()
 	texture[1].setupTexture("resources/texture/rockTexture.bmp");
 	texture[2].setupTexture("resources/texture/earthTexture.bmp");
 	texture[3].setupTexture("resources/texture/vehicleTexture.bmp");
+    texture[4].setupTexture("resources/skybox/all_face_textures.png");
 
 }
 
@@ -485,6 +520,15 @@ void paintGL(void)  //always run
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[3]);
 	glDrawElements(GL_TRIANGLES, craft.indices.size(), GL_UNSIGNED_INT, 0);
+    // Skybox
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -30.0f, 0.0f));
+    shader.setMat4("modelMatrix", modelMatrix);
+    texture[4].bind(0);
+    shader.setInt("myTextureSampler0", 0);
+    glBindVertexArray(vao[4]);
+    glDrawElements(GL_TRIANGLES, skybox.indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
