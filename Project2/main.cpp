@@ -32,24 +32,22 @@ struct keyboardcontroller
 
 keyboardcontroller keyboardCtl;
 
-float y_delta = 1.0f;//number of degree change in y-axis
-float y_press_num = 0.0f;//number of changes in y-axis
-float x_delta = 1.0f;//number of degree change in y-axis
-float x_press_num = 0.0f;//number of changes in y-axis
-float z_delta = 1.0f;//number of degree change in y-axis
-float z_press_num = 0.0f;//number of changes in y-axis
+float x_delta = 1.0f;//magnitude of spacecraft movement in x-axis
+float x_press_num = 0.0f;//indicate number of corresponding movement
+float z_delta = 1.0f;//magnitude of spacecraft movement in z-axis
+float z_press_num = 0.0f;//indicate number of corresponding movement
 
-float rotation = 0.0f;
-float rotation2 = 0.0f;
-double prevTime = glfwGetTime();
-float x_delta2 = 0.3f;//number of degree change in y-axis
-float hori = 0.0f;
-float intensity = 1.0f;
+float rotation = 0.0f;// rotation angle for planet and local vehicle
+float rotation2 = 0.0f;//rotation angle for spacecraft
+double prevTime = glfwGetTime();//get time interval for rotation and other events
+float x_delta2 = 0.3f;//magnitude of local vehicle movement in x-axis
+float hori = 0.0f;//location of local vehicle in x-axis
+float intensity = 1.0f;//intesity of directional light
 
 Shader shader;
 
 glm::vec3 camPos;//camera position
-const int n = 5;
+const int n = 5;//number of objects
 GLuint vao[n];
 GLuint vbo[n];
 GLuint ebo[n];
@@ -182,6 +180,7 @@ Model loadOBJ(const char* objPath)
 	return model;
 }
 
+//Load different obects
 Model spacecraft = loadOBJ("resources/object/spacecraft.obj");
 Model rock = loadOBJ("resources/object/rock.obj");
 Model planet = loadOBJ("resources/object/planet.obj");
@@ -203,6 +202,7 @@ void sendDataToOpenGL()
 {
 	//TODO
 	//Load objects and bind to VAO and VBO
+	//bind spacecraft
 	glGenVertexArrays(1, &vao[0]);
 	glBindVertexArray(vao[0]);
 
@@ -246,7 +246,8 @@ void sendDataToOpenGL()
 	glGenBuffers(1, &ebo[0]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, spacecraft.indices.size() * sizeof(unsigned int), &spacecraft.indices[0], GL_STATIC_DRAW);
-	///////////////////////////////////////////////////////////////////////////////////
+	
+	//bind rock
 	glGenVertexArrays(1, &vao[1]);
 	glBindVertexArray(vao[1]);
 
@@ -290,7 +291,8 @@ void sendDataToOpenGL()
 	glGenBuffers(1, &ebo[1]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, rock.indices.size() * sizeof(unsigned int), &rock.indices[0], GL_STATIC_DRAW);
-	///////////////////////////////////////////////////////////////////////////////////
+	
+	//bind planet
 	glGenVertexArrays(1, &vao[2]);
 	glBindVertexArray(vao[2]);
 
@@ -334,7 +336,8 @@ void sendDataToOpenGL()
 	glGenBuffers(1, &ebo[2]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, planet.indices.size() * sizeof(unsigned int), &planet.indices[0], GL_STATIC_DRAW);
-	///////////////////////////////////////////////////////////////////////////////////
+	
+	//bind local vehicle
 	glGenVertexArrays(1, &vao[3]);
 	glBindVertexArray(vao[3]);
 
@@ -379,7 +382,7 @@ void sendDataToOpenGL()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[3]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, craft.indices.size() * sizeof(unsigned int), &craft.indices[0], GL_STATIC_DRAW);
 
-	///////////////////////////////////////////
+	//bind skybox
 	glGenVertexArrays(1, &vao[4]);
 	glBindVertexArray(vao[4]);
 
@@ -436,17 +439,17 @@ void sendDataToOpenGL()
 
 }
 
-const int num = 200;
-float scaleMax = 0.7f;
-float scaleMin = 0.1f;
-float scale[num];
-float yMax = 8.0f;
-float yMin = 5.0f;
-float y[num];
-float circleMax = 135.0f;
-float circleMin = 65.0f;
-float z[num];
-float x[num];
+const int num = 200;//number of rocks in the ring
+float scaleMax = 0.7f;//upper limit for the size of the rock
+float scaleMin = 0.1f;//lower limit for the size of the rock
+float scale[num];//stored size of different rock
+float yMax = 8.0f;//upper limit for the y-coor of the rock
+float yMin = 5.0f;//lower limit for the y-coor of the rock
+float y[num];//stored y-coor of different rock
+float circleMax = 135.0f;//upper limit for the size of the ring
+float circleMin = 65.0f;//lower limit for the size of the ring
+float z[num];//stored z-coor of different rock
+float x[num];//stored x-coor of different rock
 
 
 void initializedGL(void) //run only once
@@ -459,7 +462,6 @@ void initializedGL(void) //run only once
 	sendDataToOpenGL();
 
 	//set up camera position
-	//camPos = glm::vec3(0.0f, 50.0f, 0.0f);
 	camPos = glm::vec3(0.0f, 3.5f, -6.5f);
 	//TODO: set up the vertex shader and fragment shader
 	shader.setupShader("VertexShaderCode.glsl", "FragmentShaderCode.glsl");
@@ -467,7 +469,7 @@ void initializedGL(void) //run only once
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-
+	//randomize the postion and scale of the rocks
 	for (int i = 0; i < num; i++) {
 		scale[i] = (scaleMax - scaleMin) * rand() / (RAND_MAX + 1.0) + scaleMin;
 		y[i] = (yMax - yMin) * rand() / (RAND_MAX + 1.0) + yMin;
@@ -511,21 +513,24 @@ void paintGL(void)  //always run
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
+	//set perspective
 	projectionMatrix = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 500.0f);
-
 	shader.setMat4("projectionMatrix", projectionMatrix);
 
+	//for every 0.05s trigger some events
 	double crntTime = glfwGetTime();
 	if (crntTime - prevTime >= 0.05) {
-		rotation += 1.0f;
-		prevTime = crntTime;
+		rotation += 1.0f;//increase angle -> self rotation
+		prevTime = crntTime;//set incoming time interval
+		//set movement range for local vehicle
 		if (hori <= 15.0f && hori >= -15.0f) {
-			hori += x_delta2;
+			hori += x_delta2;//move forward on the track
 		}
 		else {
 			x_delta2 *= -1.0f;
-			hori += x_delta2;
+			hori += x_delta2;//move backward on the track
 		}
+		//continuous movement for spacecraft is button is holding down
 		if (keyboardCtl.LEFT)
 			x_press_num += 1.0f;
 		if (keyboardCtl.RIGHT)
@@ -534,22 +539,23 @@ void paintGL(void)  //always run
 			z_press_num += 1.0f;
 		if (keyboardCtl.DOWN)
 			z_press_num -= 1.0f;
-		double xpos, ypos;
+		double xpos, ypos;//position of mouse
 		glfwGetCursorPos(window, &xpos, &ypos);
-		rotation2 = (xpos-400) / 800 * 360;
+		rotation2 = (xpos-400) / 800 * 360;//rotation angle for spacecraft
 	}
 
-	//viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	//set up stationary camera related to spacectaft
 	viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	viewMatrix = glm::rotate(viewMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
-	viewMatrix = glm::translate(viewMatrix, glm::vec3(-x_delta * x_press_num , -y_delta * y_press_num, -z_delta * z_press_num));
-	//camera position
+	viewMatrix = glm::translate(viewMatrix, glm::vec3(-x_delta * x_press_num , 0.0f, -z_delta * z_press_num));
+	//sent info to shader
 	shader.setVec3("eyePositionWorld", camPos);
 	shader.setMat4("viewMatrix", viewMatrix);
-	shader.setInt("normalMapping_flag", 0);
-	shader.setInt("light_flag", 1);
-	//spacecraft
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num, y_delta * y_press_num, z_delta * z_press_num));
+	shader.setInt("normalMapping_flag", 0);//disable normal mapping as default 
+	shader.setInt("light_flag", 1);//enable light as default 
+
+	//set model matrix and draw spacecraft
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num, 0.0f, z_delta * z_press_num));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 200.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
@@ -559,9 +565,9 @@ void paintGL(void)  //always run
 	glDrawElements(GL_TRIANGLES, spacecraft.indices.size(), GL_UNSIGNED_INT, 0);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(200.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num, -y_delta * y_press_num, -z_delta * z_press_num));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num, 0.0f, -z_delta * z_press_num));
 
-	//rock
+	//set model matrix and draw rock
 	texture[1].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[1]);
@@ -580,8 +586,9 @@ void paintGL(void)  //always run
 	}
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -6.5f, -100.0f));
 
+	//enable normal mapping
 	shader.setInt("normalMapping_flag", 1);
-	//planet
+	//set model matrix and draw planet
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 100.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
@@ -596,8 +603,9 @@ void paintGL(void)  //always run
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -100.0f));
 
+	//disable normal mapping
 	shader.setInt("normalMapping_flag", 0);
-	//local craft
+	//set model matrix and draw local vehicle
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(hori, 0.0f, 20.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -607,13 +615,12 @@ void paintGL(void)  //always run
 	glBindVertexArray(vao[3]);
 	glDrawElements(GL_TRIANGLES, craft.indices.size(), GL_UNSIGNED_INT, 0);
 
+	//disable light
 	shader.setInt("light_flag", 0);
-	// Skybox
+	//set model matrix and draw skybox
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(4.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -30.0f, 0.0f));
-	//    modelMatrix = glm::translate(modelMatrix, glm::vec3(hori, 0.0f, 20.0f));
-	//    modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
 	texture[4].bind(0);
 	shader.setInt("myTextureSampler0", 0);
@@ -644,28 +651,28 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-		keyboardCtl.LEFT = true;
+		keyboardCtl.LEFT = true;//left is holding down
 	}
 	if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
-		keyboardCtl.LEFT = false;
+		keyboardCtl.LEFT = false;//left is released
 	}
 	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-		keyboardCtl.RIGHT = true;
+		keyboardCtl.RIGHT = true;//right is holding down
 	}
 	if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
-		keyboardCtl.RIGHT = false;
+		keyboardCtl.RIGHT = false;//right is released
 	}
 	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-		keyboardCtl.UP = true;
+		keyboardCtl.UP = true;//up is holding down
 	}
 	if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
-		keyboardCtl.UP = false;
+		keyboardCtl.UP = false;//up is released
 	}
 	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-		keyboardCtl.DOWN = true;
+		keyboardCtl.DOWN = true;//down is holding down
 	}
 	if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
-		keyboardCtl.DOWN = false;
+		keyboardCtl.DOWN = false;//down is released
 	}
 	if (key == GLFW_KEY_W && action == GLFW_PRESS)
 	{//increase light intensity when it is below 1.0
