@@ -44,6 +44,7 @@ float rotation2 = 0.0f;
 double prevTime = glfwGetTime();
 float x_delta2 = 0.3f;//number of degree change in y-axis
 float hori = 0.0f;
+float intensity = 1.0f;
 
 Shader shader;
 
@@ -185,7 +186,7 @@ Model spacecraft = loadOBJ("resources/object/spacecraft.obj");
 Model rock = loadOBJ("resources/object/rock.obj");
 Model planet = loadOBJ("resources/object/planet.obj");
 Model craft = loadOBJ("resources/object/craft.obj");
-Model skybox = loadOBJ('resources/skybox/skybox.obj');
+Model skybox = loadOBJ("resources/skybox/skybox.obj");
 
 void get_OpenGL_info()
 {
@@ -231,6 +232,17 @@ void sendDataToOpenGL()
 		(void*)offsetof(Vertex, uv) // array buffer offset
 	);
 
+	//vertex normal
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(Vertex), // stride
+		(void*)offsetof(Vertex, normal) // array buffer offset
+	);
+
 	glGenBuffers(1, &ebo[0]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, spacecraft.indices.size() * sizeof(unsigned int), &spacecraft.indices[0], GL_STATIC_DRAW);
@@ -262,6 +274,17 @@ void sendDataToOpenGL()
 		GL_FALSE, // normalized?
 		sizeof(Vertex), // stride
 		(void*)offsetof(Vertex, uv) // array buffer offset
+	);
+
+	//vertex normal
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(Vertex), // stride
+		(void*)offsetof(Vertex, normal) // array buffer offset
 	);
 
 	glGenBuffers(1, &ebo[1]);
@@ -297,6 +320,17 @@ void sendDataToOpenGL()
 		(void*)offsetof(Vertex, uv) // array buffer offset
 	);
 
+	//vertex normal
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(Vertex), // stride
+		(void*)offsetof(Vertex, normal) // array buffer offset
+	);
+
 	glGenBuffers(1, &ebo[2]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[2]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, planet.indices.size() * sizeof(unsigned int), &planet.indices[0], GL_STATIC_DRAW);
@@ -330,43 +364,66 @@ void sendDataToOpenGL()
 		(void*)offsetof(Vertex, uv) // array buffer offset
 	);
 
+	//vertex normal
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(Vertex), // stride
+		(void*)offsetof(Vertex, normal) // array buffer offset
+	);
+
 	glGenBuffers(1, &ebo[3]);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[3]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, craft.indices.size() * sizeof(unsigned int), &craft.indices[0], GL_STATIC_DRAW);
 
-    ///////////////////////////////////////////
-    glGenVertexArrays(1, &vao[4]);
-    glBindVertexArray(vao[4]);
+	///////////////////////////////////////////
+	glGenVertexArrays(1, &vao[4]);
+	glBindVertexArray(vao[4]);
 
-    glGenBuffers(1, &vbo[4]);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[4]);
-    glBufferData(GL_ARRAY_BUFFER, skybox.vertices.size() * sizeof(Vertex), &skybox.vertices[0], GL_STATIC_DRAW);
+	glGenBuffers(1, &vbo[4]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[4]);
+	glBufferData(GL_ARRAY_BUFFER, skybox.vertices.size() * sizeof(Vertex), &skybox.vertices[0], GL_STATIC_DRAW);
 
-    //vertex position
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(
-        0, // attribute
-        3, // size
-        GL_FLOAT, // type
-        GL_FALSE, // normalized?
-        sizeof(Vertex), // stride
-        (void*)offsetof(Vertex, position) // array buffer offset
-    );
+	//vertex position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(Vertex), // stride
+		(void*)offsetof(Vertex, position) // array buffer offset
+	);
 
-    //vertex uv
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(
-        1, // attribute
-        2, // size
-        GL_FLOAT, // type
-        GL_FALSE, // normalized?
-        sizeof(Vertex), // stride
-        (void*)offsetof(Vertex, uv) // array buffer offset
-    );
+	//vertex uv
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(
+		1, // attribute
+		2, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(Vertex), // stride
+		(void*)offsetof(Vertex, uv) // array buffer offset
+	);
 
-    glGenBuffers(1, &ebo[4]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[4]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, skybox.indices.size() * sizeof(unsigned int), &skybox.indices[0], GL_STATIC_DRAW);
+	//vertex normal
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		sizeof(Vertex), // stride
+		(void*)offsetof(Vertex, normal) // array buffer offset
+	);
+
+	glGenBuffers(1, &ebo[4]);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[4]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, skybox.indices.size() * sizeof(unsigned int), &skybox.indices[0], GL_STATIC_DRAW);
+
 
 
 	//Load textures
@@ -374,7 +431,8 @@ void sendDataToOpenGL()
 	texture[1].setupTexture("resources/texture/rockTexture.bmp");
 	texture[2].setupTexture("resources/texture/earthTexture.bmp");
 	texture[3].setupTexture("resources/texture/vehicleTexture.bmp");
-    texture[4].setupTexture("resources/skybox/all_face_textures.png");
+	texture[4].setupTexture("resources/skybox/all_face_textures.png");
+	texture[5].setupTexture("resources/texture/earthNormal.bmp");
 
 }
 
@@ -427,12 +485,33 @@ void paintGL(void)  //always run
 	//TODO:
 	shader.use();
 	//Set lighting information, such as position and color of lighting source
+	//lighting color
+	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec3 diffuseColor = lightColor * glm::vec3(0.8f);
+	glm::vec3 ambientColor = lightColor * glm::vec3(0.05f);
+
+	//Directional light info
+	shader.setVec3("dirLight.direction", glm::vec3(0.0f, -1.0f, 0.0f));
+	shader.setVec3("dirLight.ambient", ambientColor);
+	shader.setVec3("dirLight.diffuse", diffuseColor);
+	shader.setVec3("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	shader.setFloat("dirLight.intensity", intensity);
+
+	//Point light info
+	shader.setVec3("pointLight.position", glm::vec3(10.0f, 7.0f, 70.0f));
+	shader.setVec3("pointLight.ambient", ambientColor);
+	shader.setVec3("pointLight.diffuse", diffuseColor);
+	shader.setVec3("pointLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	shader.setFloat("pointLight.constant", 1.0f);
+	shader.setFloat("pointLight.linear", 0.014f);
+	shader.setFloat("pointLight.quadratic", 0.0007f);
+
 	//Set transformation matrix
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	glm::mat4 viewMatrix = glm::mat4(1.0f);
 	glm::mat4 projectionMatrix = glm::mat4(1.0f);
 
-	projectionMatrix = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 300.0f);
+	projectionMatrix = glm::perspective(glm::radians(75.0f), 1.0f, 0.1f, 500.0f);
 
 	shader.setMat4("projectionMatrix", projectionMatrix);
 
@@ -464,8 +543,12 @@ void paintGL(void)  //always run
 	viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	viewMatrix = glm::rotate(viewMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
 	viewMatrix = glm::translate(viewMatrix, glm::vec3(-x_delta * x_press_num , -y_delta * y_press_num, -z_delta * z_press_num));
+	//camera position
+	shader.setVec3("eyePositionWorld", camPos);
 	shader.setMat4("viewMatrix", viewMatrix);
-
+	shader.setInt("normalMapping_flag", 0);
+	shader.setInt("light_flag", 1);
+	//spacecraft
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num, y_delta * y_press_num, z_delta * z_press_num));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 200.0f));
@@ -478,10 +561,10 @@ void paintGL(void)  //always run
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num, -y_delta * y_press_num, -z_delta * z_press_num));
 
+	//rock
 	texture[1].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[1]);
-
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 6.5f, 100.0f));
 	for (int i = 0; i < num; i++) {
 		modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -497,12 +580,14 @@ void paintGL(void)  //always run
 	}
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -6.5f, -100.0f));
 
-
-
+	shader.setInt("normalMapping_flag", 1);
+	//planet
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 100.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
+	texture[5].bind(0);
+	shader.setInt("myTextureSampler1", 0);
 	texture[2].bind(0);
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[2]);
@@ -511,7 +596,8 @@ void paintGL(void)  //always run
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -100.0f));
 
-
+	shader.setInt("normalMapping_flag", 0);
+	//local craft
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(hori, 0.0f, 20.0f));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -520,15 +606,19 @@ void paintGL(void)  //always run
 	shader.setInt("myTextureSampler0", 0);
 	glBindVertexArray(vao[3]);
 	glDrawElements(GL_TRIANGLES, craft.indices.size(), GL_UNSIGNED_INT, 0);
-    // Skybox
-    modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -30.0f, 0.0f));
-    shader.setMat4("modelMatrix", modelMatrix);
-    texture[4].bind(0);
-    shader.setInt("myTextureSampler0", 0);
-    glBindVertexArray(vao[4]);
-    glDrawElements(GL_TRIANGLES, skybox.indices.size(), GL_UNSIGNED_INT, 0);
+
+	shader.setInt("light_flag", 0);
+	// Skybox
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(4.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -30.0f, 0.0f));
+	//    modelMatrix = glm::translate(modelMatrix, glm::vec3(hori, 0.0f, 20.0f));
+	//    modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+	shader.setMat4("modelMatrix", modelMatrix);
+	texture[4].bind(0);
+	shader.setInt("myTextureSampler0", 0);
+	glBindVertexArray(vao[4]);
+	glDrawElements(GL_TRIANGLES, skybox.indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -576,6 +666,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
 		keyboardCtl.DOWN = false;
+	}
+	if (key == GLFW_KEY_W && action == GLFW_PRESS)
+	{//increase light intensity when it is below 1.0
+		if (intensity < 1.0f)
+			intensity += 0.1f;
+	}
+	if (key == GLFW_KEY_S && action == GLFW_PRESS)
+	{//decrease light intensity when it is above 0.0
+		if (intensity > 0.0f)
+			intensity -= 0.1f;
 	}
 }
 
