@@ -12,6 +12,7 @@ Student Name:
 #include "Shader.h"
 #include "Texture.h"
 
+#include <algorithm>  
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -43,6 +44,10 @@ double prevTime = glfwGetTime();//get time interval for rotation and other event
 float x_delta2 = 0.3f;//magnitude of local vehicle movement in x-axis
 float hori = 0.0f;//location of local vehicle in x-axis
 float intensity = 1.0f;//intesity of directional light
+
+bool space = false;
+std::vector<glm::mat4> rocketPos;
+std::vector<glm::mat4>::iterator it;
 
 Shader shader;
 
@@ -542,6 +547,11 @@ void paintGL(void)  //always run
 		double xpos, ypos;//position of mouse
 		glfwGetCursorPos(window, &xpos, &ypos);
 		rotation2 = (xpos-400) / 800 * 360;//rotation angle for spacecraft
+		for (it = rocketPos.begin();it != rocketPos.end();it++) {
+			glm::mat4 modelMatrixR = *it;
+			modelMatrixR = glm::translate(modelMatrixR, glm::vec3(0.0f, 0.0f, 0.3f));
+			std::replace(rocketPos.begin(), rocketPos.end(), *it, modelMatrixR);
+		}
 	}
 
 	//set up stationary camera related to spacectaft
@@ -554,9 +564,23 @@ void paintGL(void)  //always run
 	shader.setInt("normalMapping_flag", 0);//disable normal mapping as default 
 	shader.setInt("light_flag", 1);//enable light as default 
 
+	for (it = rocketPos.begin();it != rocketPos.end();it++) {
+		texture[1].bind(0);
+		shader.setInt("myTextureSampler0", 0);
+		glBindVertexArray(vao[1]);
+		shader.setMat4("modelMatrix", *it);
+		glDrawElements(GL_TRIANGLES, planet.indices.size(), GL_UNSIGNED_INT, 0);
+	}
+
 	//set model matrix and draw spacecraft
 	modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num, 0.0f, z_delta * z_press_num));
 	modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
+
+	if (space) {
+		rocketPos.push_back(modelMatrix);
+		space = false;
+	}
+
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 200.0f));
 	shader.setMat4("modelMatrix", modelMatrix);
 	texture[0].bind(0);
@@ -683,6 +707,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	{//decrease light intensity when it is above 0.0
 		if (intensity > 0.0f)
 			intensity -= 0.1f;
+	}
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		if (!space) {
+			space = true;
+		}
 	}
 }
 
