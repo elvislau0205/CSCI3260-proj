@@ -1,13 +1,23 @@
-CSCI3260 Assignment 2 Texture Mapping/ Lighting Control  
+CSCI3260 Course Project
 
-Name: 
-Student ID:
+Names: WONG Chi Kwan Cyrus, LAU Ho Man Elvis
+Student IDs: 1155159006, 1155157519
 
 Manipulation:
-	// For example:
-        // Key "Esc": exit
-        // Key "r": rotate cube model
-
-        // Mouse
-        // ....................
-
+	Key <w>
+    - Increase the intensity directional light
+    Key <s>
+    - Decrease the intensity of directional light
+    Key <up>
+    - Move spacecraft and viewpoint towards the z direction (front)
+    Key <down>
+    - Move spacecraft and viewpoint towards the negative z direction (back)
+    Key <left>
+    - Move spacecraft and viewpoint towards the x direction (left)
+    Key <right>
+    - Move spacecraft and viewpoint towards the negative x direction (right)
+    Key <esc> - Exit
+    Key <space>
+    - Shoot rocket to the direction spacecraft is facing
+    Key <r>
+    - Reset space vehicle to intact

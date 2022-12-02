@@ -1,7 +1,7 @@
 /*
 Student Information
-Student ID:
-Student Name:
+ Names: WONG Chi Kwan Cyrus, LAU Ho Man Elvis
+ Student IDs: 1155159006, 1155157519
 */
 
 #include "Dependencies/glew/glew.h"
@@ -12,7 +12,7 @@ Student Name:
 #include "Shader.h"
 #include "Texture.h"
 
-#include <algorithm>  
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -33,31 +33,48 @@ struct keyboardcontroller
 
 keyboardcontroller keyboardCtl;
 
+
 float x_delta = 1.0f;//magnitude of spacecraft movement in x-axis
 float x_press_num = 0.0f;//indicate number of corresponding movement
 float z_delta = 1.0f;//magnitude of spacecraft movement in z-axis
 float z_press_num = 0.0f;//indicate number of corresponding movement
 
+glm::vec3 craftPos = glm::vec3(0.0f, 0.0f, 0.0f);
+
 float rotation = 0.0f;// rotation angle for planet and local vehicle
 float rotation2 = 0.0f;//rotation angle for spacecraft
 double prevTime = glfwGetTime();//get time interval for rotation and other events
-float x_delta2 = 0.3f;//magnitude of local vehicle movement in x-axis
-float hori = 0.0f;//location of local vehicle in x-axis
+
+float x_delta2 = 0.5f;//magnitude of local vehicle movement in x-axis
+
+struct UFO {
+    glm::vec3 position;
+    enum Status{intact=0, damaged=1, destroyed=2} status;
+    float movement_magnitude = 0.5f;
+    float x_movement_range[2];
+};
+
+std::vector<UFO> ufo_container;
+
 float intensity = 1.0f;//intesity of directional light
 
 bool space = false;
+
+
 std::vector<glm::mat4> rocketPos;
 std::vector<glm::mat4>::iterator it;
 
+glm::vec3 PlanetPos = glm::vec3(0.0f, 0.0f, 100.0f);
+
 Shader shader;
 
-glm::vec3 camPos;//camera position
+glm::vec3 cameraPos;//camera position
 const int n = 6;//number of objects
 GLuint vao[n];
 GLuint vbo[n];
 GLuint ebo[n];
 
-Texture texture[6];
+Texture texture[7];
 
 // struct for storing the obj file
 struct Vertex {
@@ -532,7 +549,8 @@ void sendDataToOpenGL()
     texture[4].setupTexture("resources/skybox/all_face_textures.png");
     texture[5].setupTexture("resources/texture/earthNormal.bmp");
     texture[6].setupTexture("resources/rocket/rocket.jpg");
-
+    texture[7].setupTexture("resources/texture/vehicleTextureRed.png");
+    
 }
 
 const int num = 200;//number of rocks in the ring
@@ -557,8 +575,17 @@ void initializedGL(void) //run only once
     get_OpenGL_info();
     sendDataToOpenGL();
 
+    // Set up ufo basic info
+    UFO aUFO;
+    aUFO.position = glm::vec3(0.0f, 0.0f, 20.0f);
+    aUFO.status = UFO::intact;
+    aUFO.x_movement_range[0] = -15.0f;
+    aUFO.x_movement_range[1] = 15.0f;
+    aUFO.movement_magnitude = 0.3f;
+    ufo_container.push_back(aUFO);
+    
     //set up camera position
-    camPos = glm::vec3(0.0f, 3.5f, -6.5f);
+    cameraPos = glm::vec3(0.0f, 3.5f, -6.5f);
     //TODO: set up the vertex shader and fragment shader
     shader.setupShader("VertexShaderCode.glsl", "FragmentShaderCode.glsl");
 
@@ -576,9 +603,59 @@ void initializedGL(void) //run only once
     };
 }
 
+float xzDistance(glm::vec3 pos1, glm::vec3 pos2) {
+    return pow((pos1.x - pos2.x),2) + pow((pos1.z - pos2.z),2);
+}
+/*
+    Given the locations of rockets, the locations of UFOs,
+    we can have a function to calculate whether the rocket is collided with any of the UFO.
+    This can be realized by calculating the distance of UFO and rocket. If true, in other words,
+    if it is lower than a certain threshold, on the first hit, UFO should turn into red. (Change the texture mapping).
+    On the second hit, it should disappear. (Remove its location from array)
+    TODO: Implement above
+ */
+
+bool isLegalPosition(glm::vec3 objNextPos) {
+    // skybox
+    if ((objNextPos.x <= -200 || objNextPos.x >= 200) ||
+        (objNextPos.y <= -200 || objNextPos.y >= 200) ||
+        (objNextPos.z <= -200 || objNextPos.z >= 200))
+    {
+        std::cout << "DEBUG: Too close to skybox" << std::endl;
+        return false;
+    }
+    
+    // planet
+    if (xzDistance(objNextPos, PlanetPos) < 200) {
+        std::cout << "DEBUG: Too close to planet" << std::endl;
+        return false;
+    }
+    
+    // UFO
+    for (std::vector<UFO>::iterator iter = ufo_container.begin();
+         iter != ufo_container.end(); iter++) {
+        if (xzDistance(iter->position, objNextPos) < 50) {
+            std::cout << "DEBUG: Too close to UFO" << std::endl;
+            // change the status of UFO
+            if (iter->status == UFO::intact) {
+                iter->status = UFO::damaged;
+            } else if (iter->status == UFO::damaged) {
+                iter->status = UFO::destroyed;
+            }
+            
+            return false;
+        }
+    }
+   
+    
+    return true;
+}
+
+
+
 void paintGL(void)  //always run
 {
-    glClearColor(1.0f, 1.0f, 1.0f, 0.5f); //specify the background color, this is just an example
+    glClearColor(0.0f, 0.0f, 0.0f, 0.5f); //specify the background color, this is just an example
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //TODO:
     shader.use();
@@ -618,14 +695,19 @@ void paintGL(void)  //always run
     if (crntTime - prevTime >= 0.05) {
         rotation += 1.0f;//increase angle -> self rotation
         prevTime = crntTime;//set incoming time interval
+        
         //set movement range for local vehicle
-        if (hori <= 15.0f && hori >= -15.0f) {
-            hori += x_delta2;//move forward on the track
+        for (std::vector<UFO>::iterator iter = ufo_container.begin(); iter != ufo_container.end(); iter++) {
+            if (iter->position.x >= iter->x_movement_range[0] && iter->position.x <= iter->x_movement_range[1]) {
+                
+                iter->position.x += iter->movement_magnitude;//move forward on the track
+            } else {
+                iter->movement_magnitude *= -1.0f;
+                iter->position.x += iter->movement_magnitude;//move backward on the track
+            }
         }
-        else {
-            x_delta2 *= -1.0f;
-            hori += x_delta2;//move backward on the track
-        }
+        
+        
         //continuous movement for spacecraft is button is holding down
         if (keyboardCtl.LEFT)
             x_press_num += 1.0f;
@@ -638,41 +720,38 @@ void paintGL(void)  //always run
         double xpos, ypos;//position of mouse
         glfwGetCursorPos(window, &xpos, &ypos);
         rotation2 = (xpos-400) / 800 * 360;//rotation angle for spacecraft
-        for (it = rocketPos.begin();it != rocketPos.end();it++) {
-            glm::mat4 modelMatrixR = *it;
-            modelMatrixR = glm::translate(modelMatrixR, glm::vec3(0.0f, 0.0f, 0.3f * 800.0f));
-            std::replace(rocketPos.begin(), rocketPos.end(), *it, modelMatrixR);
-        }
     }
+    
+    for (it = rocketPos.begin();it != rocketPos.end();it++) {
+        glm::mat4 modelMatrixR = *it;
+        modelMatrixR = glm::translate(modelMatrixR, glm::vec3(0.0f, 0.0f, 0.5f * 800.0f));
+        std::replace(rocketPos.begin(), rocketPos.end(), *it, modelMatrixR);
+    }
+    
 
     //set up stationary camera related to spacectaft
-    viewMatrix = glm::lookAt(camPos, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    viewMatrix = glm::lookAt(cameraPos, glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     viewMatrix = glm::rotate(viewMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
     viewMatrix = glm::translate(viewMatrix, glm::vec3(-x_delta * x_press_num , 0.0f, -z_delta * z_press_num));
     //sent info to shader
-    shader.setVec3("eyePositionWorld", camPos);
+    shader.setVec3("eyePositionWorld", cameraPos);
     shader.setMat4("viewMatrix", viewMatrix);
     shader.setInt("normalMapping_flag", 0);//disable normal mapping as default
     shader.setInt("light_flag", 1);//enable light as default
 
-    for (it = rocketPos.begin();it != rocketPos.end();it++) {
-        texture[6].bind(0);
-        shader.setInt("myTextureSampler0", 0);
-        glBindVertexArray(vao[5]);
-        shader.setMat4("modelMatrix", *it);
-        glDrawElements(GL_TRIANGLES, rocket.indices.size(), GL_UNSIGNED_INT, 0);
-    }
+    
 
     //set model matrix and draw spacecraft
     modelMatrix = glm::translate(modelMatrix, glm::vec3(x_delta * x_press_num, 0.0f, z_delta * z_press_num));
     modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
-
+    
     if (space) {
         modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 800.0f));
         rocketPos.push_back(modelMatrix);
         space = false;
         modelMatrix = glm::scale(modelMatrix, glm::vec3(800.0f));
     }
+    
 
     modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f / 200.0f));
     shader.setMat4("modelMatrix", modelMatrix);
@@ -683,7 +762,29 @@ void paintGL(void)  //always run
     modelMatrix = glm::scale(modelMatrix, glm::vec3(200.0f));
     modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation2), glm::vec3(0.0f, 1.0f, 0.0f));
     modelMatrix = glm::translate(modelMatrix, glm::vec3(-x_delta * x_press_num, 0.0f, -z_delta * z_press_num));
-
+    
+    /*
+     ==============
+         Rockets
+     ==============
+     */
+    for (it = rocketPos.begin();it != rocketPos.end();it++) {
+        // Remove if the rocket is out of skybox
+        glm::vec3 rocketLocVec = glm::vec3((*it)[3]);
+        
+        // Handle illegal position for rocket
+        if (!isLegalPosition(rocketLocVec)) {
+            rocketPos.erase(it);
+            break;
+        }
+        
+        texture[6].bind(0);
+        shader.setInt("myTextureSampler0", 0);
+        glBindVertexArray(vao[5]);
+        shader.setMat4("modelMatrix", *it);
+        glDrawElements(GL_TRIANGLES, (int)rocket.indices.size(), GL_UNSIGNED_INT, 0);
+    }
+    
     //set model matrix and draw rock
     texture[1].bind(0);
     shader.setInt("myTextureSampler0", 0);
@@ -702,11 +803,16 @@ void paintGL(void)  //always run
         modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     }
     modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -6.5f, -100.0f));
-
+    
+    /*
+     ===============
+         Planet
+     ===============
+     */
     //enable normal mapping
     shader.setInt("normalMapping_flag", 1);
     //set model matrix and draw planet
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 100.0f));
+    modelMatrix = glm::translate(modelMatrix, PlanetPos);
     modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     modelMatrix = glm::scale(modelMatrix, glm::vec3(10.0f));
     shader.setMat4("modelMatrix", modelMatrix);
@@ -720,17 +826,42 @@ void paintGL(void)  //always run
     modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, -100.0f));
 
+    /*
+     =========
+        UFO
+     =========
+     */
     //disable normal mapping
     shader.setInt("normalMapping_flag", 0);
     //set model matrix and draw local vehicle
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
-    modelMatrix = glm::translate(modelMatrix, glm::vec3(hori, 0.0f, 20.0f));
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-    shader.setMat4("modelMatrix", modelMatrix);
-    texture[3].bind(0);
-    shader.setInt("myTextureSampler0", 0);
-    glBindVertexArray(vao[3]);
-    glDrawElements(GL_TRIANGLES, (int)craft.indices.size(), GL_UNSIGNED_INT, 0);
+    for (std::vector<UFO>::iterator iter = ufo_container.begin();
+         iter != ufo_container.end(); iter++) {
+        
+        if (iter->status == UFO::intact) {
+            texture[3].bind(0);
+        } else if (iter->status == UFO::damaged) {
+            texture[7].bind(0);
+        } else if (iter->status == UFO::destroyed) {
+            continue;
+        }
+        
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
+        modelMatrix = glm::translate(modelMatrix, iter->position);
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        shader.setMat4("modelMatrix", modelMatrix);
+        shader.setInt("myTextureSampler0", 0);
+        glBindVertexArray(vao[3]);
+        glDrawElements(GL_TRIANGLES, (int)craft.indices.size(), GL_UNSIGNED_INT, 0);
+        
+        modelMatrix = glm::rotate(modelMatrix, glm::radians(-rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        modelMatrix = glm::translate(modelMatrix,  iter->position * -1.0f);
+        modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
+       
+        
+
+    }
+
+   
 
     //disable light
     shader.setInt("light_flag", 0);
@@ -743,6 +874,8 @@ void paintGL(void)  //always run
     shader.setInt("myTextureSampler0", 0);
     glBindVertexArray(vao[4]);
     glDrawElements(GL_TRIANGLES, (int)skybox.indices.size(), GL_UNSIGNED_INT, 0);
+    
+   
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -767,6 +900,10 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+    
     if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
         keyboardCtl.LEFT = true;//left is holding down
     }
@@ -807,6 +944,28 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             space = true;
         }
     }
+    if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+        for (std::vector<UFO>::iterator iter = ufo_container.begin();
+             iter != ufo_container.end(); iter++) {
+            iter->status = UFO::intact;
+            iter->position = glm::vec3(0.0f, 0.0f, 20.0f);
+        }
+    }
+//    if (key == GLFW_KEY_TAB && action == GLFW_PRESS) {
+//        UFO newUFO;
+//        newUFO.status = UFO::intact;
+//
+//        float x_coord = ((rand() / (RAND_MAX + 1.0f)) * 400.0f) - 200.0f;
+//        float y_coord = 0.0f;
+//        float z_coord = ((rand() / (RAND_MAX + 1.0f)) * 400.0f) - 200.0f;
+//        newUFO.position = glm::vec3(x_coord, y_coord, z_coord);
+//
+//        float tmp = (rand() / (RAND_MAX + 1.0f)) * 20.0f;
+//        newUFO.x_movement_range[0] = (-1 * tmp) + x_coord;
+//        newUFO.x_movement_range[1] = tmp + x_coord;
+//
+//        ufo_container.push_back(newUFO);
+//    }
 }
 
 int main(int argc, char* argv[])
